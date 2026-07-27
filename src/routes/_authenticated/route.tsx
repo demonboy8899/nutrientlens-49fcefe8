@@ -1,0 +1,26 @@
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+
+export const Route = createFileRoute("/_authenticated")({
+  ssr: false,
+  beforeLoad: async ({ location }) => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) throw redirect({ to: "/auth" });
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("onboarded")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
+    const onboarded = profile?.onboarded ?? false;
+    if (!onboarded && !location.pathname.startsWith("/onboarding")) {
+      throw redirect({ to: "/onboarding" });
+    }
+    if (onboarded && location.pathname.startsWith("/onboarding")) {
+      throw redirect({ to: "/home" });
+    }
+    return { user: data.user };
+  },
+  component: () => <Outlet />,
+});
