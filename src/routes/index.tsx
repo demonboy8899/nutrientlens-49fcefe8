@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "AI macro scanning, workout logging, athlete style library and an AI coach in one dark-mode gym app.",
+          "NutrientLens turns a photo into macros, logs every set with progressive overload tracking, and lets you follow any elite lifter's training style, any day.",
       },
     ],
   }),

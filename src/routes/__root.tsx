@@ -82,22 +82,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { title: "NutrientLens — AI Macro & Training Tracker" },
+      { title: "NutrientLens — Scan Food, Track Lifts, Train Like Them" },
       {
         name: "description",
         content:
-          "Scan food for instant macros, log every set, and follow elite lifter training styles. NutrientLens is your dark-mode gym command center.",
+          "NutrientLens turns a photo into macros, logs every set with progressive overload tracking, and lets you follow any elite lifter's training style, any day.",
       },
       { name: "author", content: "NutrientLens" },
       { name: "theme-color", content: "#0A1128" },
-      { property: "og:title", content: "NutrientLens — AI Macro & Training Tracker" },
+      { property: "og:title", content: "NutrientLens — Scan Food, Track Lifts, Train Like Them" },
       {
         property: "og:description",
         content:
-          "Scan food for instant macros, log every set, and train like the athletes you follow.",
+          "NutrientLens turns a photo into macros, logs every set with progressive overload tracking, and lets you follow any elite lifter's training style, any day.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "NutrientLens — Scan Food, Track Lifts, Train Like Them" },
+      { name: "twitter:description", content: "NutrientLens turns a photo into macros, logs every set with progressive overload tracking, and lets you follow any elite lifter's training style, any day." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/8860b6ff-0d2b-48fa-8258-2b9bf6e579f3" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/8860b6ff-0d2b-48fa-8258-2b9bf6e579f3" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -114,7 +118,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
 
