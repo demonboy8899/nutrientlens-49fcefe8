@@ -162,24 +162,51 @@
   h1,
   h2,
   h3 {
-    font-family: var(--font-display);
-    letter-spacing: 0.01em;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  /* Bold, gym-brand line icons — never thin/minimal */
+  svg.lucide {
+    stroke-width: 2.4;
   }
 }
 
 @utility numeric {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-  line-height: 0.95;
+  letter-spacing: 0.01em;
+  line-height: 0.9;
+}
+
+@utility numeric-gradient {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 0.9;
+  background-image: var(--gradient-heat);
+  background-clip: text;
+  color: transparent;
 }
 
 @utility surface {
   background-image: var(--gradient-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), var(--inner-glow);
+}
+
+@utility surface-active {
+  border-color: color-mix(in oklab, var(--color-primary) 45%, transparent);
+  box-shadow:
+    inset 0 0 24px -6px oklch(0.715 0.161 234 / 30%),
+    var(--shadow-card);
+}
+
+@utility gold {
+  background-image: var(--gradient-gold);
+  color: var(--color-accent-foreground);
 }
 
 @utility heat {
@@ -188,7 +215,7 @@
 }
 
 @utility label-caps {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 0.66rem;
@@ -201,4 +228,8 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+@utility pr-glow {
+  animation: var(--animate-pr-pulse);
 }
