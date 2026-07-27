@@ -39,12 +39,12 @@ export function Button({
     <button
       {...props}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl font-display font-semibold uppercase tracking-wider transition-all active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center gap-2 rounded-2xl font-heading font-bold tracking-wide uppercase transition-all active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50",
         size === "sm" && "px-3 py-1.5 text-xs",
         size === "md" && "px-4 py-2.5 text-sm",
         size === "lg" && "w-full px-5 py-3.5 text-base",
         variant === "primary" && "heat shadow-[var(--shadow-glow)]",
-        variant === "accent" && "bg-accent text-accent-foreground",
+        variant === "accent" && "gold shadow-[var(--shadow-gold)]",
         variant === "outline" && "border border-border bg-elevated text-foreground",
         variant === "ghost" && "text-muted-foreground hover:text-foreground",
         variant === "danger" && "bg-destructive text-destructive-foreground",
