@@ -136,14 +136,15 @@ function ProgressPage() {
 
   async function logMeasurements() {
     const user_id = await currentUserId();
-    const payload: Record<string, unknown> = {
+    const payload = {
       user_id,
       log_date: todayISO(),
+      arms_cm: Number(measure.arms_cm) || null,
+      chest_cm: Number(measure.chest_cm) || null,
+      waist_cm: Number(measure.waist_cm) || null,
+      glutes_cm: Number(measure.glutes_cm) || null,
+      thighs_cm: Number(measure.thighs_cm) || null,
     };
-    for (const f of MEASURE_FIELDS) {
-      const v = Number(measure[f.key]);
-      if (v) payload[f.key] = v;
-    }
     const { error } = await supabase.from("measurements").insert(payload);
     if (error) return toast.error(error.message);
     setMeasure({});
