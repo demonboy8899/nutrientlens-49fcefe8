@@ -99,6 +99,37 @@ export function Chip({
   );
 }
 
+export function CountUp({
+  value,
+  duration = 700,
+  className,
+}: {
+  value: number;
+  duration?: number;
+  className?: string;
+}) {
+  const [shown, setShown] = useState(value);
+  const fromRef = useRef(value);
+
+  useEffect(() => {
+    const from = fromRef.current;
+    if (from === value) return;
+    const start = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setShown(Math.round(from + (value - from) * eased));
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else fromRef.current = value;
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, duration]);
+
+  return <span className={className}>{shown.toLocaleString()}</span>;
+}
+
 export function Stat({
   value,
   unit,
@@ -114,19 +145,19 @@ export function Stat({
     <div>
       <p
         className={cn(
-          "numeric text-2xl",
+          "numeric text-3xl",
           tone === "primary" && "text-primary",
           tone === "accent" && "text-accent",
         )}
       >
-        {value}
+        {typeof value === "number" ? <CountUp value={value} /> : value}
         {unit ? (
-          <span className="ml-0.5 text-xs font-semibold text-muted-foreground">
+          <span className="font-sans ml-1 text-[0.6rem] font-bold tracking-widest text-muted-foreground uppercase">
             {unit}
           </span>
         ) : null}
       </p>
-      <p className="label-caps mt-1">{label}</p>
+      <p className="label-caps mt-1.5">{label}</p>
     </div>
   );
 }
@@ -143,19 +174,26 @@ export function MacroBar({
   color: string;
 }) {
   const pct = target > 0 ? Math.min(100, (value / target) * 100) : 0;
+  const hit = pct >= 100;
   return (
     <div>
       <div className="flex items-baseline justify-between">
         <span className="label-caps">{label}</span>
-        <span className="numeric text-sm text-foreground">
-          {Math.round(value)}
+        <span
+          className={cn("numeric text-lg", hit ? "text-accent" : "text-foreground")}
+        >
+          <CountUp value={Math.round(value)} />
           <span className="text-muted-foreground">/{target}g</span>
         </span>
       </div>
-      <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-secondary">
+      <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-secondary">
         <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, backgroundColor: color }}
+          className="h-full rounded-full transition-all duration-700"
+          style={{
+            width: `${pct}%`,
+            backgroundImage: `linear-gradient(90deg, color-mix(in oklab, ${color} 55%, var(--background)), ${color})`,
+            boxShadow: `0 0 14px -2px ${color}`,
+          }}
         />
       </div>
     </div>
@@ -173,41 +211,60 @@ export function CalorieRing({
   const c = 2 * Math.PI * r;
   const pct = target > 0 ? Math.min(1, consumed / target) : 0;
   const remaining = Math.max(0, Math.round(target - consumed));
+  const hit = pct >= 1;
 
   return (
-    <div className="relative mx-auto h-48 w-48">
+    <div className="relative mx-auto h-52 w-52">
       <svg viewBox="0 0 180 180" className="h-full w-full -rotate-90">
+        <defs>
+          <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="var(--primary)" />
+            <stop offset="60%" stopColor="var(--primary)" />
+            <stop offset="100%" stopColor="var(--accent)" />
+          </linearGradient>
+        </defs>
         <circle
           cx="90"
           cy="90"
           r={r}
           fill="none"
           stroke="var(--secondary)"
-          strokeWidth="13"
+          strokeWidth="14"
         />
         <circle
           cx="90"
           cy="90"
           r={r}
           fill="none"
-          stroke="var(--primary)"
-          strokeWidth="13"
+          stroke="url(#ringGrad)"
+          strokeWidth="14"
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c * (1 - pct)}
-          style={{ transition: "stroke-dashoffset 700ms ease" }}
+          style={{
+            transition: "stroke-dashoffset 900ms cubic-bezier(0.22,1,0.36,1)",
+            filter: "drop-shadow(0 0 8px color-mix(in oklab, var(--primary) 55%, transparent))",
+          }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <p className="numeric text-5xl text-foreground">{remaining}</p>
-        <p className="label-caps mt-1">kcal left</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {Math.round(consumed)} / {target}
+        <p
+          className={cn(
+            "numeric text-6xl",
+            hit ? "text-accent animate-[count-up_0.5s_ease-out]" : "text-foreground",
+          )}
+        >
+          <CountUp value={remaining} />
+        </p>
+        <p className="label-caps mt-1.5">{hit ? "goal hit" : "kcal left"}</p>
+        <p className="mt-1 text-xs font-medium text-muted-foreground">
+          {Math.round(consumed).toLocaleString()} / {target.toLocaleString()}
         </p>
       </div>
     </div>
   );
 }
+
 
 export function Empty({ children }: { children: ReactNode }) {
   return (
