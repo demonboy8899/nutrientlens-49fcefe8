@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ATHLETE_STYLES } from "@/lib/style-library";
 import { currentUserId, useInvalidate, useProfile } from "@/lib/queries";
 
-export const Route = createFileRoute("/_authenticated/styles")({
+export const Route = createFileRoute("/_authenticated/styles/")({
   head: () => ({
     meta: [
       { title: "Athlete Style Library — NutrientLens" },
