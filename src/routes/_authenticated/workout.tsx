@@ -652,7 +652,7 @@ function ExerciseCard({
             </span>
           )}
           {isPR && (
-            <span className="label-caps flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1 text-primary">
+            <span className="label-caps pr-glow flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-accent">
               <Trophy className="h-3 w-3" /> PR {topWeight}kg
             </span>
           )}
