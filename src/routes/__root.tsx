@@ -89,7 +89,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Scan food for instant macros, log every set, and follow elite lifter training styles. NutrientLens is your dark-mode gym command center.",
       },
       { name: "author", content: "NutrientLens" },
-      { name: "theme-color", content: "#1c1a18" },
+      { name: "theme-color", content: "#0A1128" },
       { property: "og:title", content: "NutrientLens — AI Macro & Training Tracker" },
       {
         property: "og:description",
@@ -108,7 +108,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap",
       },
       {
         rel: "stylesheet",
