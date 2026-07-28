@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export function Card({
   className,
@@ -58,22 +59,37 @@ export function Field({
   label,
   suffix,
   className,
+  type,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   suffix?: string;
 }) {
+  const isPassword = type === "password";
+  const [shown, setShown] = useState(false);
+  const inputType = isPassword ? (shown ? "text" : "password") : type;
   return (
     <label className="block">
       {label ? <span className="label-caps mb-1.5 block">{label}</span> : null}
       <div className="flex items-center gap-2 rounded-xl border border-input bg-elevated px-3 py-2.5 focus-within:border-primary">
         <input
           {...props}
+          type={inputType}
           className={cn(
             "w-full min-w-0 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground",
             className,
           )}
         />
+        {isPassword ? (
+          <button
+            type="button"
+            aria-label={shown ? "Hide password" : "Show password"}
+            onClick={() => setShown((s) => !s)}
+            className="shrink-0 text-muted-foreground hover:text-foreground"
+          >
+            {shown ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        ) : null}
         {suffix ? <span className="label-caps shrink-0">{suffix}</span> : null}
       </div>
     </label>

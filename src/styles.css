@@ -80,6 +80,15 @@
   }
 }
 
+@keyframes form-guide-draw {
+  0% {
+    stroke-dashoffset: 200;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
 :root {
   --radius: 1rem;
 
@@ -232,4 +241,9 @@
 
 @utility pr-glow {
   animation: var(--animate-pr-pulse);
+}
+
+.form-guide-arc {
+  stroke-dasharray: 200;
+  animation: form-guide-draw 1.8s ease-out forwards;
 }

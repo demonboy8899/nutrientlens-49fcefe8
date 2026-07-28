@@ -13,6 +13,7 @@ import {
   Trash2,
   Trophy,
   X,
+  Activity,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import {
@@ -635,6 +636,8 @@ function ExerciseCard({
         </div>
       </div>
 
+      <FormGuide name={ex.exercise_name} rest={ex.rest_seconds} />
+
       {(last || isPR) && (
         <div className="mt-3 flex flex-wrap gap-2">
           {last && (
@@ -728,5 +731,52 @@ function ExerciseCard({
         )}
       </div>
     </Card>
+  );
+}
+
+function FormGuide({ name, rest }: { name: string; rest: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="label-caps flex items-center gap-1.5 text-primary"
+      >
+        <Activity className="h-3.5 w-3.5" />
+        {open ? "Hide form guide" : "Show form guide"}
+      </button>
+      {open && (
+        <div className="mt-2 overflow-hidden rounded-xl border border-border bg-elevated">
+          <div className="relative flex h-24 items-center justify-center">
+            <svg viewBox="0 0 120 80" className="h-full w-full">
+              <path
+                d="M10 40 Q 35 10, 60 40 T 110 40"
+                fill="none"
+                stroke="var(--primary)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                className="form-guide-arc"
+              />
+              <circle r="5" fill="var(--accent)" className="form-guide-dot">
+                <animateMotion
+                  dur="2.4s"
+                  repeatCount="indefinite"
+                  path="M10 40 Q 35 10, 60 40 T 110 40"
+                />
+              </circle>
+            </svg>
+            <span className="label-caps absolute bottom-2 left-3">
+              tempo · {rest}s rest
+            </span>
+          </div>
+          <ul className="space-y-1 border-t border-border px-4 py-3 text-xs text-muted-foreground">
+            <li>• Control the negative for ~2s, explode up.</li>
+            <li>• Full range of motion — no half reps on {name}.</li>
+            <li>• Brace your core, keep tension through the set.</li>
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }

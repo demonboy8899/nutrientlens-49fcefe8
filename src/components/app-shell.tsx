@@ -34,7 +34,10 @@ export function AppShell({
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-lg flex-col bg-background">
-      <header className="sticky top-0 z-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border/70 bg-background/85 px-5 pt-6 pb-4 backdrop-blur-xl">
+      <header
+        className="sticky top-0 z-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border/70 bg-background/85 px-5 pb-4 backdrop-blur-xl"
+        style={{ paddingTop: "max(1.5rem, env(safe-area-inset-top))" }}
+      >
         <div className="min-w-0">
           <h1 className="truncate text-3xl font-bold uppercase tracking-tight text-foreground">
             {title}
@@ -46,7 +49,7 @@ export function AppShell({
         {action ? <div className="shrink-0">{action}</div> : null}
       </header>
 
-      <main className="flex-1 px-5 pt-5 pb-32">{children}</main>
+      <main className="flex-1 px-5 pt-5 pb-32" style={{ paddingBottom: "max(8rem, calc(8rem + env(safe-area-inset-bottom)))" }}>{children}</main>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-lg border-t border-border/70 bg-background/95 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
         <ul className="grid grid-cols-6">
