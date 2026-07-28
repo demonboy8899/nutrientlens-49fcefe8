@@ -591,6 +591,7 @@ function ExerciseCard({
   onRest: (sec: number) => void;
 }) {
   const [sets, setSets] = useState<ExerciseSet[]>(ex.sets ?? []);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => setSets(ex.sets ?? []), [ex.sets]);
 
@@ -607,6 +608,15 @@ function ExerciseCard({
   const delta = last ? topWeight - last.weight : 0;
   const isPR = pr && topWeight > 0 && topWeight >= pr.weight;
 
+  // Simple video URL mapping based on the exercise name
+  const getVideoUrl = (name: string) => {
+    const query = name.toLowerCase();
+    if (query.includes("squat")) return "https://assets.mixkit.co/videos/preview/mixkit-woman-doing-squats-in-a-gym-42998-large.mp4";
+    if (query.includes("bench press")) return "https://assets.mixkit.co/videos/preview/mixkit-man-lifting-weights-in-a-gym-43003-large.mp4";
+    // Default fallback workout demonstration video
+    return "https://assets.mixkit.co/videos/preview/mixkit-man-exercising-with-dumbbells-in-a-gym-43002-large.mp4";
+  };
+
   return (
     <Card>
       <div className="flex items-start justify-between gap-3">
@@ -618,4 +628,132 @@ function ExerciseCard({
             {ex.muscle_group} · target {ex.target_sets} × {ex.target_reps}
           </p>
         </div>
-        <div className
+        <div className="flex items-center gap-2">
+          {/* Button to toggle the video player */}
+          <button
+            onClick={() => setShowVideo(!showVideo)}
+            className={`rounded-lg px-2.5 py-1 text-xs font-semibold uppercase tracking-wider border transition-colors ${
+              showVideo 
+                ? "border-primary bg-primary text-primary-foreground" 
+                : "border-border bg-elevated text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {showVideo ? "Hide Video" : "Watch Form"}
+          </button>
+          
+          <button
+            aria-label="Delete exercise"
+            onClick={onDelete}
+            className="rounded-lg p-2 text-muted-foreground hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Video Player Box that pops open when clicked */}
+      {showVideo && (
+        <div className="mt-3 overflow-hidden rounded-xl border border-border bg-black/40 p-2">
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
+            <video
+              src={getVideoUrl(ex.exercise_name)}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <p className="mt-2 text-center text-xs text-muted-foreground uppercase tracking-widest">
+            Demonstration: {ex.exercise_name}
+          </p>
+        </div>
+      )}
+
+      {/* PR / Last Session Badges */}
+      {(last || pr) && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {last && (
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated px-2.5 py-1 text-xs text-muted-foreground">
+              <History className="h-3 w-3" />
+              Last: {last.weight}kg × {last.reps}
+              {delta !== 0 && (
+                <span className={delta > 0 ? "text-emerald-400" : "text-rose-400"}>
+                  ({delta > 0 ? `+${delta}` : delta})
+                </span>
+              )}
+            </span>
+          )}
+          {pr && (
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs text-accent">
+              <Trophy className="h-3 w-3" />
+              PR: {pr.weight}kg × {pr.reps}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Sets inputs table rows */}
+      <div className="mt-4 space-y-2">
+        <div className="grid grid-cols-12 gap-2 px-1 text-xs font-semibold text-muted-foreground">
+          <div className="col-span-2 text-center">SET</div>
+          <div className="col-span-4 text-center">KG</div>
+          <div className="col-span-4 text-center">REPS</div>
+          <div className="col-span-2 text-center">DONE</div>
+        </div>
+        {sets.map((s, i) => (
+          <div key={i} className="grid grid-cols-12 items-center gap-2">
+            <div className="col-span-2 text-center numeric text-sm font-bold text-muted-foreground">
+              {i + 1}
+            </div>
+            <div className="col-span-4">
+              <input
+                type="number"
+                inputMode="decimal"
+                value={s.weight}
+                onChange={(e) => {
+                  const next = update(i, { weight: e.target.value });
+                  onSave(next);
+                }}
+                placeholder={last ? String(last.weight) : "0"}
+                className="w-full rounded-xl border border-border bg-elevated px-3 py-2 text-center numeric text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div className="col-span-4">
+              <input
+                type="number"
+                inputMode="numeric"
+                value={s.reps}
+                onChange={(e) => {
+                  const next = update(i, { reps: e.target.value });
+                  onSave(next);
+                }}
+                placeholder={last ? String(last.reps) : "0"}
+                className="w-full rounded-xl border border-border bg-elevated px-3 py-2 text-center numeric text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div className="col-span-2 flex justify-center">
+              <button
+                aria-label={`Mark set ${i + 1} as done`}
+                onClick={() => {
+                  const next = update(i, { done: !s.done });
+                  onSave(next);
+                  if (!s.done && ex.rest_seconds) {
+                    onRest(ex.rest_seconds);
+                  }
+                }}
+                className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-colors ${
+                  s.done
+                    ? "border-accent bg-accent text-accent-foreground"
+                    : "border-border bg-elevated text-muted-foreground hover:border-primary"
+                }`}
+              >
+                <Check className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
