@@ -13,24 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Build web app
-        run: bun run build
-      - name: Debug build output
-        run: |
-          echo "=== Top-level after build ==="
-          ls -la
-          echo "=== Searching for index.html ==="
-          find . -maxdepth 4 -name "index.html" -not -path "*/node_modules/*"
-          echo "=== .output tree (if it exists) ==="
-          find .output -maxdepth 4 2>/dev/null || echo "(no .output directory)"
-
-      - name: Set up Node.js (for npx/Capacitor tooling)
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -44,10 +27,14 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Create empty web folder
+        run: mkdir -p www && echo "<html></html>" > www/index.html
+
+      - name: Install Capacitor
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+
       - name: Add Capacitor Android platform
-        run: |
-          bun add @capacitor/core @capacitor/cli @capacitor/android
-          if [ ! -d android ]; then npx cap add android; fi
+        run: npx cap add android
 
       - name: Sync Capacitor Android project
         run: npx cap sync android
