@@ -1,0 +1,6 @@
+{
+  "appId": "com.nutrientlens.app",
+  "appName": "NutrientLens",
+  "webDir": ".output/public",
+  "bundledWebRuntime": false
+}
