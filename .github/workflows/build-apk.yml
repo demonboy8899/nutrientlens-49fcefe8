@@ -21,6 +21,14 @@ jobs:
 
       - name: Build web app
         run: bun run build
+      - name: Debug build output
+        run: |
+          echo "=== Top-level after build ==="
+          ls -la
+          echo "=== Searching for index.html ==="
+          find . -maxdepth 4 -name "index.html" -not -path "*/node_modules/*"
+          echo "=== .output tree (if it exists) ==="
+          find .output -maxdepth 4 2>/dev/null || echo "(no .output directory)"
 
       - name: Set up Node.js (for npx/Capacitor tooling)
         uses: actions/setup-node@v4
