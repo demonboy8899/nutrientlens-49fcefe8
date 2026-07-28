@@ -1,6 +1,9 @@
 {
   "appId": "com.nutrientlens.app",
   "appName": "NutrientLens",
-  "webDir": ".output/public",
-  "bundledWebRuntime": false
+  "webDir": "www",
+  "server": {
+    "url": "https://nutrientlens.lovable.app",
+    "cleartext": false
+  }
 }
