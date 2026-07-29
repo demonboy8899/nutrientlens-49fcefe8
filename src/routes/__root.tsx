@@ -45,13 +45,26 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
+      <div className="max-w-xl text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Something went wrong on our end. You can try refreshing or head back home.
         </p>
+
+        {/* TEMPORARY DIAGNOSTIC — remove once fixed */}
+        <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-left">
+          <p className="text-xs font-mono text-destructive break-words">
+            {error?.message || String(error)}
+          </p>
+          {error?.stack && (
+            <pre className="mt-2 max-h-48 overflow-auto text-[10px] text-muted-foreground whitespace-pre-wrap break-words">
+              {error.stack}
+            </pre>
+          )}
+        </div>
+
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -152,4 +165,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-
