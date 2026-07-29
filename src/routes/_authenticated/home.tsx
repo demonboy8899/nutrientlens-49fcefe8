@@ -57,6 +57,8 @@ export const Route = createFileRoute("/_authenticated/home")({
 function Home() {
   const date = todayISO();
   const navigate = useNavigate();
+  const [showSettings, setShowSettings] = useState(false);
+  useEffect(() => applyStoredAccent(), []);
   const invalidate = useInvalidate();
   const { data: profile } = useProfile();
   const { data: foods } = useFoodLogs(date);
