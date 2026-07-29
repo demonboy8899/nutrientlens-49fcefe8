@@ -6,7 +6,6 @@ import {
   LayoutGrid,
   TrendingUp,
   MessageSquareText,
-  User,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -48,18 +47,7 @@ export function AppShell({
           ) : null}
         </div>
 
-        {/* Header Actions: Animation container, custom actions, and Profile button */}
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="form-guide-arc"></div>
-          {action}
-          <Link
-            to="/profile"
-            aria-label="Profile"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-elevated text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <User className="h-4 w-4" />
-          </Link>
-        </div>
+        <div className="flex items-center gap-2 shrink-0">{action}</div>
       </header>
 
       <main className="flex-1 px-5 pt-5 pb-32" style={{ paddingBottom: "max(8rem, calc(8rem + env(safe-area-inset-bottom)))" }}>{children}</main>
