@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   Area,
@@ -9,8 +9,9 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-import { Droplets, LogOut, Plus } from "lucide-react";
+import { Droplets, LogOut, Plus, Settings } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { ProfileSheet, applyStoredAccent } from "@/components/profile-sheet";
 import {
   Button,
   CalorieRing,
@@ -56,6 +57,8 @@ export const Route = createFileRoute("/_authenticated/home")({
 function Home() {
   const date = todayISO();
   const navigate = useNavigate();
+  const [showSettings, setShowSettings] = useState(false);
+  useEffect(() => applyStoredAccent(), []);
   const invalidate = useInvalidate();
   const { data: profile } = useProfile();
   const { data: foods } = useFoodLogs(date);
@@ -102,18 +105,29 @@ function Home() {
         month: "short",
       })}
       action={
-        <button
-          aria-label="Sign out"
-          onClick={async () => {
-            await supabase.auth.signOut();
-            navigate({ to: "/auth" });
-          }}
-          className="rounded-full border border-border bg-elevated p-2.5 text-muted-foreground"
-        >
-          <LogOut className="h-4 w-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            aria-label="Profile and settings"
+            onClick={() => setShowSettings(true)}
+            className="rounded-full border border-border bg-elevated p-2.5 text-muted-foreground"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
+          <button
+            aria-label="Sign out"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/auth" });
+            }}
+            className="rounded-full border border-border bg-elevated p-2.5 text-muted-foreground"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </div>
       }
     >
+      {showSettings && <ProfileSheet onClose={() => setShowSettings(false)} />}
+
       <Card className="text-center">
         <CalorieRing
           consumed={totals.calories}
