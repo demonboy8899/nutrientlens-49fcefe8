@@ -608,14 +608,6 @@ function ExerciseCard({
   const delta = last ? topWeight - last.weight : 0;
   const isPR = pr && topWeight > 0 && topWeight >= pr.weight;
 
-  // Simple video URL mapping based on the exercise name
-  const getVideoUrl = (name: string) => {
-    const query = name.toLowerCase();
-    if (query.includes("squat")) return "https://assets.mixkit.co/videos/preview/mixkit-woman-doing-squats-in-a-gym-42998-large.mp4";
-    if (query.includes("bench press")) return "https://assets.mixkit.co/videos/preview/mixkit-man-lifting-weights-in-a-gym-43003-large.mp4";
-    // Default fallback workout demonstration video
-    return "https://assets.mixkit.co/videos/preview/mixkit-man-exercising-with-dumbbells-in-a-gym-43002-large.mp4";
-  };
 
   return (
     <Card>
@@ -629,7 +621,7 @@ function ExerciseCard({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Button to toggle the video player */}
+          {/* Button to toggle the animated form guide */}
           <button
             onClick={() => setShowVideo(!showVideo)}
             className={`rounded-lg px-2.5 py-1 text-xs font-semibold uppercase tracking-wider border transition-colors ${
@@ -638,7 +630,7 @@ function ExerciseCard({
                 : "border-border bg-elevated text-muted-foreground hover:text-foreground"
             }`}
           >
-            {showVideo ? "Hide Video" : "Watch Form"}
+            {showVideo ? "Hide Guide" : "Watch Form"}
           </button>
           
           <button
@@ -651,24 +643,97 @@ function ExerciseCard({
         </div>
       </div>
 
-      {/* Video Player Box that pops open when clicked */}
+      {/* Animated SVG form guide that pops open when clicked */}
       {showVideo && (
-        <div className="mt-3 overflow-hidden rounded-xl border border-border bg-black/40 p-2">
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
-            <video
-              src={getVideoUrl(ex.exercise_name)}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="h-full w-full object-cover"
-            />
+        <div className="mt-3 overflow-hidden rounded-xl border border-border bg-elevated/60 p-2">
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-background/70">
+            <svg
+              viewBox="0 0 240 135"
+              role="img"
+              aria-label={`Animated rep path guide for ${ex.exercise_name}`}
+              className="h-full w-full"
+            >
+              <defs>
+                <linearGradient id="formGuideGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="var(--primary)" />
+                  <stop offset="100%" stopColor="var(--accent)" />
+                </linearGradient>
+              </defs>
+
+              {/* top / bottom rep markers */}
+              <line
+                x1="45"
+                y1="34"
+                x2="195"
+                y2="34"
+                stroke="var(--border)"
+                strokeWidth="2"
+                strokeDasharray="6 6"
+              />
+              <line
+                x1="45"
+                y1="101"
+                x2="195"
+                y2="101"
+                stroke="var(--border)"
+                strokeWidth="2"
+                strokeDasharray="6 6"
+              />
+
+              {/* rep path: down and back up */}
+              <path
+                className="form-guide-arc"
+                d="M70 34 C 96 34, 96 101, 120 101 C 144 101, 144 34, 170 34"
+                fill="none"
+                stroke="url(#formGuideGrad)"
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
+
+              {/* moving bar / limb */}
+              <g>
+                <line
+                  x1="88"
+                  y1="0"
+                  x2="152"
+                  y2="0"
+                  stroke="var(--primary)"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  opacity="0.9"
+                >
+                  <animateTransform
+                    attributeName="transform"
+                    type="translate"
+                    values="0 34; 0 101; 0 34"
+                    dur="2.4s"
+                    repeatCount="indefinite"
+                    calcMode="spline"
+                    keyTimes="0;0.5;1"
+                    keySplines="0.4 0 0.2 1; 0.4 0 0.2 1"
+                  />
+                </line>
+                <circle r="6" cx="120" cy="0" fill="var(--accent)">
+                  <animateTransform
+                    attributeName="transform"
+                    type="translate"
+                    values="0 34; 0 101; 0 34"
+                    dur="2.4s"
+                    repeatCount="indefinite"
+                    calcMode="spline"
+                    keyTimes="0;0.5;1"
+                    keySplines="0.4 0 0.2 1; 0.4 0 0.2 1"
+                  />
+                </circle>
+              </g>
+            </svg>
           </div>
           <p className="mt-2 text-center text-xs text-muted-foreground uppercase tracking-widest">
-            Demonstration: {ex.exercise_name}
+            Form Guide: {ex.exercise_name}
           </p>
         </div>
       )}
+
 
       {/* PR / Last Session Badges */}
       {(last || pr) && (
