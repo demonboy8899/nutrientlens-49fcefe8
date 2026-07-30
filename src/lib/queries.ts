@@ -223,6 +223,36 @@ export function useAllExerciseLogs() {
   });
 }
 
+export type PlanExerciseRow = {
+  name: string;
+  muscle: string;
+  sets: number;
+  reps: string;
+  rest: number;
+};
+
+export type WorkoutPlan = {
+  id: string;
+  name: string;
+  notes: string | null;
+  exercises: PlanExerciseRow[];
+  updated_at: string;
+};
+
+export function useWorkoutPlans() {
+  return useQuery({
+    queryKey: ["workout-plans"],
+    queryFn: async (): Promise<WorkoutPlan[]> => {
+      const { data, error } = await supabase
+        .from("workout_plans")
+        .select("id, name, notes, exercises, updated_at")
+        .order("updated_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as WorkoutPlan[];
+    },
+  });
+}
+
 export function useInvalidate() {
   const qc = useQueryClient();
   return (keys: string[]) =>
