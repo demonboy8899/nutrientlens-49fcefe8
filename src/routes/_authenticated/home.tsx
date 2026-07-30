@@ -12,6 +12,7 @@ import {
 import { Droplets, LogOut, Plus, Settings } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { ProfileSheet, applyStoredAccent } from "@/components/profile-sheet";
+import { BudgetSuggestions } from "@/components/budget-suggestions";
 import {
   Button,
   CalorieRing,
