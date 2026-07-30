@@ -124,7 +124,9 @@ function PlansPage() {
         <Plus className="h-4 w-4" /> New plan
       </Button>
 
-      <SectionTitle>Saved plans</SectionTitle>
+      <div className="mt-6">
+        <SectionTitle>Saved plans</SectionTitle>
+      </div>
 
       {isLoading ? (
         <Empty>Loading plans…</Empty>
@@ -285,6 +287,7 @@ function PlanEditor({
           />
         </div>
 
+        <div className="mt-6" />
         <SectionTitle
           right={
             <button
