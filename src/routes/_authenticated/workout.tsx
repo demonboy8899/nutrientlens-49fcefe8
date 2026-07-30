@@ -33,8 +33,11 @@ import {
   useInvalidate,
   useSession,
   useSessionHistory,
+  useWorkoutPlans,
   type ExerciseLog,
   type ExerciseSet,
+  type WorkoutPlan,
+
 } from "@/lib/queries";
 import {
   ATHLETE_STYLES,
@@ -79,6 +82,9 @@ function WorkoutPage() {
   const [rest, setRest] = useState<number | null>(null);
   const [restRunning, setRestRunning] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [planPicker, setPlanPicker] = useState(false);
+  const { data: myPlans } = useWorkoutPlans();
+
 
   useEffect(() => {
     if (rest === null || !restRunning) return;
