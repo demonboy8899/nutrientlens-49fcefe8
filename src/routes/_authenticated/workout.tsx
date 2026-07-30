@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -517,7 +517,45 @@ function WorkoutPage() {
         </Sheet>
       )}
 
+      {planPicker && (
+        <Sheet title="My plans" onClose={() => setPlanPicker(false)}>
+          {myPlans && myPlans.length > 0 ? (
+            <ul className="space-y-2">
+              {myPlans.map((p) => (
+                <li key={p.id}>
+                  <button
+                    onClick={() => loadPlan(p)}
+                    className="flex w-full items-center gap-3 rounded-xl border border-border bg-elevated px-4 py-3 text-left"
+                  >
+                    <ClipboardList className="h-5 w-5 shrink-0 text-accent" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-display text-sm font-semibold uppercase tracking-wide">
+                        {p.name}
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {p.exercises.length} exercises ·{" "}
+                        {p.exercises.reduce((s, e) => s + (e.sets || 0), 0)} sets
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Empty>No saved plans yet.</Empty>
+          )}
+          <div className="mt-4">
+            <Link to="/plans" onClick={() => setPlanPicker(false)}>
+              <Button size="lg" variant="outline">
+                <Plus className="h-4 w-4" /> Build a plan
+              </Button>
+            </Link>
+          </div>
+        </Sheet>
+      )}
+
       {adding && (
+
         <AddExerciseSheet
           onClose={() => setAdding(false)}
           onPick={addExercise}
