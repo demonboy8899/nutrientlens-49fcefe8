@@ -1,8 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   Check,
+  ClipboardList,
+
   ChevronDown,
   History,
   Pause,
@@ -33,8 +35,11 @@ import {
   useInvalidate,
   useSession,
   useSessionHistory,
+  useWorkoutPlans,
   type ExerciseLog,
   type ExerciseSet,
+  type WorkoutPlan,
+
 } from "@/lib/queries";
 import {
   ATHLETE_STYLES,
@@ -79,6 +84,9 @@ function WorkoutPage() {
   const [rest, setRest] = useState<number | null>(null);
   const [restRunning, setRestRunning] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [planPicker, setPlanPicker] = useState(false);
+  const { data: myPlans } = useWorkoutPlans();
+
 
   useEffect(() => {
     if (rest === null || !restRunning) return;
@@ -195,7 +203,56 @@ function WorkoutPage() {
     }
   }
 
+  async function loadPlan(plan: WorkoutPlan) {
+    try {
+      const user_id = await currentUserId();
+      const { data: row, error } = await supabase
+        .from("workout_sessions")
+        .upsert(
+          {
+            user_id,
+            session_date: date,
+            style_id: `plan:${plan.id}`,
+            style_name: plan.name,
+            day_label: plan.name,
+            muscle_groups: [...new Set(plan.exercises.map((e) => e.muscle))],
+          },
+          { onConflict: "user_id,session_date" },
+        )
+        .select()
+        .single();
+      if (error) throw error;
+      await supabase.from("exercise_logs").delete().eq("session_id", row.id);
+      if (plan.exercises.length > 0) {
+        const { error: insErr } = await supabase.from("exercise_logs").insert(
+          plan.exercises.map((e, i) => ({
+            user_id,
+            session_id: row.id,
+            exercise_name: e.name,
+            muscle_group: e.muscle,
+            position: i,
+            target_sets: e.sets,
+            target_reps: e.reps,
+            rest_seconds: e.rest,
+            sets: Array.from({ length: e.sets }, () => ({
+              reps: "",
+              weight: "",
+              done: false,
+            })),
+          })),
+        );
+        if (insErr) throw insErr;
+      }
+      setPlanPicker(false);
+      invalidate(["session", "session-history", "all-exercise-logs"]);
+      toast.success(`${plan.name} loaded`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not load plan");
+    }
+  }
+
   async function addExercise(name: string, muscle: string) {
+
     try {
       const row = session ?? (await ensureSession());
       const user_id = await currentUserId();
@@ -285,10 +342,18 @@ function WorkoutPage() {
 
       <div className="mt-4 grid grid-cols-2 gap-3">
         <Button onClick={() => setPicker(true)}>Choose style</Button>
-        <Button variant="outline" onClick={() => setAdding(true)}>
-          <Plus className="h-4 w-4" /> Exercise
+        <Button variant="accent" onClick={() => setPlanPicker(true)}>
+          <ClipboardList className="h-4 w-4" /> My plans
+        </Button>
+        <Button
+          variant="outline"
+          className="col-span-2"
+          onClick={() => setAdding(true)}
+        >
+          <Plus className="h-4 w-4" /> Add exercise
         </Button>
       </div>
+
 
       {session && (
         <Card className="mt-4">
@@ -452,7 +517,45 @@ function WorkoutPage() {
         </Sheet>
       )}
 
+      {planPicker && (
+        <Sheet title="My plans" onClose={() => setPlanPicker(false)}>
+          {myPlans && myPlans.length > 0 ? (
+            <ul className="space-y-2">
+              {myPlans.map((p) => (
+                <li key={p.id}>
+                  <button
+                    onClick={() => loadPlan(p)}
+                    className="flex w-full items-center gap-3 rounded-xl border border-border bg-elevated px-4 py-3 text-left"
+                  >
+                    <ClipboardList className="h-5 w-5 shrink-0 text-accent" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-display text-sm font-semibold uppercase tracking-wide">
+                        {p.name}
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {p.exercises.length} exercises ·{" "}
+                        {p.exercises.reduce((s, e) => s + (e.sets || 0), 0)} sets
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Empty>No saved plans yet.</Empty>
+          )}
+          <div className="mt-4">
+            <Link to="/plans" onClick={() => setPlanPicker(false)}>
+              <Button size="lg" variant="outline">
+                <Plus className="h-4 w-4" /> Build a plan
+              </Button>
+            </Link>
+          </div>
+        </Sheet>
+      )}
+
       {adding && (
+
         <AddExerciseSheet
           onClose={() => setAdding(false)}
           onPick={addExercise}

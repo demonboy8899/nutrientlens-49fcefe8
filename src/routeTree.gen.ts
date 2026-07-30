@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedWorkoutRouteImport } from './routes/_authenticated/workout'
 import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
+import { Route as AuthenticatedPlansRouteImport } from './routes/_authenticated/plans'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedFoodRouteImport } from './routes/_authenticated/food'
@@ -49,6 +50,11 @@ const AuthenticatedWorkoutRoute = AuthenticatedWorkoutRouteImport.update({
 const AuthenticatedProgressRoute = AuthenticatedProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPlansRoute = AuthenticatedPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/food': typeof AuthenticatedFoodRoute
   '/home': typeof AuthenticatedHomeRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/plans': typeof AuthenticatedPlansRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/workout': typeof AuthenticatedWorkoutRoute
   '/styles/$styleId': typeof AuthenticatedStylesStyleIdRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/food': typeof AuthenticatedFoodRoute
   '/home': typeof AuthenticatedHomeRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/plans': typeof AuthenticatedPlansRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/workout': typeof AuthenticatedWorkoutRoute
   '/styles/$styleId': typeof AuthenticatedStylesStyleIdRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/_authenticated/food': typeof AuthenticatedFoodRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/plans': typeof AuthenticatedPlansRoute
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/_authenticated/workout': typeof AuthenticatedWorkoutRoute
   '/_authenticated/styles/$styleId': typeof AuthenticatedStylesStyleIdRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/food'
     | '/home'
     | '/onboarding'
+    | '/plans'
     | '/progress'
     | '/workout'
     | '/styles/$styleId'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/food'
     | '/home'
     | '/onboarding'
+    | '/plans'
     | '/progress'
     | '/workout'
     | '/styles/$styleId'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/_authenticated/food'
     | '/_authenticated/home'
     | '/_authenticated/onboarding'
+    | '/_authenticated/plans'
     | '/_authenticated/progress'
     | '/_authenticated/workout'
     | '/_authenticated/styles/$styleId'
@@ -219,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProgressRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/plans': {
+      id: '/_authenticated/plans'
+      path: '/plans'
+      fullPath: '/plans'
+      preLoaderRoute: typeof AuthenticatedPlansRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
       path: '/onboarding'
@@ -269,6 +288,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFoodRoute: typeof AuthenticatedFoodRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedPlansRoute: typeof AuthenticatedPlansRoute
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
   AuthenticatedWorkoutRoute: typeof AuthenticatedWorkoutRoute
   AuthenticatedStylesStyleIdRoute: typeof AuthenticatedStylesStyleIdRoute
@@ -280,6 +300,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFoodRoute: AuthenticatedFoodRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedPlansRoute: AuthenticatedPlansRoute,
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
   AuthenticatedWorkoutRoute: AuthenticatedWorkoutRoute,
   AuthenticatedStylesStyleIdRoute: AuthenticatedStylesStyleIdRoute,

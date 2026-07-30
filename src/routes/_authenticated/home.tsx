@@ -12,6 +12,7 @@ import {
 import { Droplets, LogOut, Plus, Settings } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { ProfileSheet, applyStoredAccent } from "@/components/profile-sheet";
+import { BudgetSuggestions } from "@/components/budget-suggestions";
 import {
   Button,
   CalorieRing,
@@ -159,6 +160,16 @@ function Home() {
           </Button>
         </Link>
       </Card>
+
+      <BudgetSuggestions
+        className="mt-4"
+        remaining={{
+          calories: (profile?.calorie_target ?? 2400) - totals.calories,
+          protein: (profile?.protein_target ?? 180) - totals.protein,
+          carbs: (profile?.carb_target ?? 240) - totals.carbs,
+          fat: (profile?.fat_target ?? 70) - totals.fat,
+        }}
+      />
 
       <div className="mt-4">
         <SectionTitle>Water</SectionTitle>

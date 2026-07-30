@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ChevronRight, Star } from "lucide-react";
+import { ChevronRight, ClipboardList, Star } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Card, Chip, SectionTitle } from "@/components/ui-kit";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,7 +67,26 @@ function StylesPage() {
         </Chip>
       </div>
 
+      <Card className="mt-4">
+        <Link to="/plans" className="flex items-center gap-3">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-elevated text-accent">
+            <ClipboardList className="h-6 w-6" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="label-caps block text-accent">Your own</span>
+            <span className="block truncate text-xl font-bold uppercase">
+              My Plans
+            </span>
+            <span className="block truncate text-xs text-muted-foreground">
+              Build editable workouts and reuse them any day
+            </span>
+          </span>
+          <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+        </Link>
+      </Card>
+
       <SectionTitle>{list.length} archetypes</SectionTitle>
+
 
       <ul className="space-y-3">
         {list.map((s) => {
