@@ -340,10 +340,18 @@ function WorkoutPage() {
 
       <div className="mt-4 grid grid-cols-2 gap-3">
         <Button onClick={() => setPicker(true)}>Choose style</Button>
-        <Button variant="outline" onClick={() => setAdding(true)}>
-          <Plus className="h-4 w-4" /> Exercise
+        <Button variant="accent" onClick={() => setPlanPicker(true)}>
+          <ClipboardList className="h-4 w-4" /> My plans
+        </Button>
+        <Button
+          variant="outline"
+          className="col-span-2"
+          onClick={() => setAdding(true)}
+        >
+          <Plus className="h-4 w-4" /> Add exercise
         </Button>
       </div>
+
 
       {session && (
         <Card className="mt-4">
