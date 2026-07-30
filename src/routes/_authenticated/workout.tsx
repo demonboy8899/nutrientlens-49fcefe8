@@ -201,7 +201,56 @@ function WorkoutPage() {
     }
   }
 
+  async function loadPlan(plan: WorkoutPlan) {
+    try {
+      const user_id = await currentUserId();
+      const { data: row, error } = await supabase
+        .from("workout_sessions")
+        .upsert(
+          {
+            user_id,
+            session_date: date,
+            style_id: `plan:${plan.id}`,
+            style_name: plan.name,
+            day_label: plan.name,
+            muscle_groups: [...new Set(plan.exercises.map((e) => e.muscle))],
+          },
+          { onConflict: "user_id,session_date" },
+        )
+        .select()
+        .single();
+      if (error) throw error;
+      await supabase.from("exercise_logs").delete().eq("session_id", row.id);
+      if (plan.exercises.length > 0) {
+        const { error: insErr } = await supabase.from("exercise_logs").insert(
+          plan.exercises.map((e, i) => ({
+            user_id,
+            session_id: row.id,
+            exercise_name: e.name,
+            muscle_group: e.muscle,
+            position: i,
+            target_sets: e.sets,
+            target_reps: e.reps,
+            rest_seconds: e.rest,
+            sets: Array.from({ length: e.sets }, () => ({
+              reps: "",
+              weight: "",
+              done: false,
+            })),
+          })),
+        );
+        if (insErr) throw insErr;
+      }
+      setPlanPicker(false);
+      invalidate(["session", "session-history", "all-exercise-logs"]);
+      toast.success(`${plan.name} loaded`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not load plan");
+    }
+  }
+
   async function addExercise(name: string, muscle: string) {
+
     try {
       const row = session ?? (await ensureSession());
       const user_id = await currentUserId();
