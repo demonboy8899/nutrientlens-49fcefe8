@@ -27,7 +27,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "reset">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -43,6 +43,15 @@ function AuthPage() {
     e.preventDefault();
     setBusy(true);
     try {
+      if (mode === "reset") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + "/auth",
+        });
+        if (error) throw error;
+        toast.success("Check your email for the reset link.");
+        setMode("signin");
+        return;
+      }
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,
@@ -75,12 +84,18 @@ function AuthPage() {
       <div className="relative">
         <p className="label-caps text-primary">Nutrient · Lens</p>
         <h1 className="mt-3 text-4xl font-bold uppercase">
-          {mode === "signin" ? "Welcome back" : "Create account"}
+          {mode === "signin"
+            ? "Welcome back"
+            : mode === "signup"
+              ? "Create account"
+              : "Reset password"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {mode === "signin"
             ? "Pick up where you left off."
-            : "Two minutes to your macro targets."}
+            : mode === "signup"
+              ? "Two minutes to your macro targets."
+              : "We'll email you a link to set a new password."}
         </p>
 
         <form onSubmit={submit} className="mt-8 space-y-3">
@@ -93,35 +108,52 @@ function AuthPage() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
           />
-          <label className="block">
-            <span className="label-caps mb-1.5 block">Password</span>
-            <div className="flex items-center gap-2 rounded-xl border border-input bg-elevated px-3 py-2.5 focus-within:border-primary">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                minLength={6}
-                autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full min-w-0 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
-              />
-              <button
-                type="button"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                onClick={() => setShowPassword((s) => !s)}
-                className="shrink-0 text-muted-foreground hover:text-foreground"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          </label>
+          {mode !== "reset" ? (
+            <label className="block">
+              <span className="label-caps mb-1.5 block">Password</span>
+              <div className="flex items-center gap-2 rounded-xl border border-input bg-elevated px-3 py-2.5 focus-within:border-primary">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  minLength={6}
+                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full min-w-0 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
+                />
+                <button
+                  type="button"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="shrink-0 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </label>
+          ) : null}
+          {mode === "signin" ? (
+            <button
+              type="button"
+              onClick={() => setMode("reset")}
+              className="block w-full text-right text-xs font-semibold text-primary hover:underline"
+            >
+              Forgot password?
+            </button>
+          ) : null}
           <Button size="lg" disabled={busy} type="submit">
-            {busy ? "Working…" : mode === "signin" ? "Sign in" : "Sign up"}
+            {busy
+              ? "Working…"
+              : mode === "signin"
+                ? "Sign in"
+                : mode === "signup"
+                  ? "Sign up"
+                  : "Send reset link"}
           </Button>
         </form>
 
@@ -132,7 +164,9 @@ function AuthPage() {
         >
           {mode === "signin"
             ? "No account? Create one"
-            : "Already have an account? Sign in"}
+            : mode === "signup"
+              ? "Already have an account? Sign in"
+              : "Back to sign in"}
         </button>
       </div>
     </div>
