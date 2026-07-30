@@ -18,6 +18,7 @@ import { todayISO } from "@/lib/nutrition";
 import { currentUserId, useFoodLogs, useInvalidate, useProfile } from "@/lib/queries";
 import { analyzeFoodPhoto } from "@/lib/ai.functions";
 import { FOOD_DB } from "@/lib/food-db";
+import { BudgetSuggestions } from "@/components/budget-suggestions";
 
 export const Route = createFileRoute("/_authenticated/food")({
   head: () => ({
@@ -173,6 +174,27 @@ function FoodPage() {
           />
         </div>
       </Card>
+
+      <BudgetSuggestions
+        className="mt-4"
+        remaining={{
+          calories: (profile?.calorie_target ?? 2400) - totals.calories,
+          protein: (profile?.protein_target ?? 180) - totals.protein,
+          carbs: (profile?.carb_target ?? 240) - totals.carbs,
+          fat: (profile?.fat_target ?? 70) - totals.fat,
+        }}
+        onAdd={(f) =>
+          setDraft({
+            name: f.name,
+            quantity: f.serving,
+            calories: f.calories,
+            protein: f.protein,
+            carbs: f.carbs,
+            fat: f.fat,
+            source: "suggestion",
+          })
+        }
+      />
 
       <div className="mt-4">
         <SectionTitle>Meal</SectionTitle>
