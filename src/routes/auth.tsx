@@ -32,22 +32,31 @@ function AuthPage() {
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const recoveryRef = useRef(false);
 
   useEffect(() => {
     const href = window.location.href;
     const isRecoveryUrl =
       href.includes("type=recovery") || href.includes("error_code=");
-    if (href.includes("type=recovery")) setMode("recovery");
+    if (href.includes("type=recovery")) {
+      recoveryRef.current = true;
+      setMode("recovery");
+    }
 
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") setMode("recovery");
+      if (event === "PASSWORD_RECOVERY") {
+        recoveryRef.current = true;
+        setMode("recovery");
+      }
     });
 
     if (!isRecoveryUrl) {
       supabase.auth.getSession().then(({ data }) => {
-        if (data.session) navigate({ to: "/home" });
+        // Never bounce a password-recovery session into the app.
+        if (data.session && !recoveryRef.current) navigate({ to: "/home" });
       });
     }
 
@@ -56,6 +65,10 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "recovery" && password !== confirmPassword) {
+      toast.error("Passwords don't match");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "recovery") {
@@ -64,8 +77,11 @@ function AuthPage() {
         await supabase.auth.signOut();
         toast.success("Password updated. Sign in with your new password.");
         setPassword("");
+        setConfirmPassword("");
+        recoveryRef.current = false;
         setMode("signin");
         window.history.replaceState(null, "", "/auth");
+        navigate({ to: "/auth" });
         return;
       }
       if (mode === "reset") {
