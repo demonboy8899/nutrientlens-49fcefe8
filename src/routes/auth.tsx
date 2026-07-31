@@ -187,6 +187,23 @@ function AuthPage() {
               </div>
             </label>
           ) : null}
+          {mode === "recovery" ? (
+            <label className="block">
+              <span className="label-caps mb-1.5 block">Confirm password</span>
+              <div className="flex items-center gap-2 rounded-xl border border-input bg-elevated px-3 py-2.5 focus-within:border-primary">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full min-w-0 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+            </label>
+          ) : null}
           {mode === "signin" ? (
             <button
               type="button"
