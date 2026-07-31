@@ -114,29 +114,37 @@ function AuthPage() {
             ? "Welcome back"
             : mode === "signup"
               ? "Create account"
-              : "Reset password"}
+              : mode === "recovery"
+                ? "Set new password"
+                : "Reset password"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {mode === "signin"
             ? "Pick up where you left off."
             : mode === "signup"
               ? "Two minutes to your macro targets."
-              : "We'll email you a link to set a new password."}
+              : mode === "recovery"
+                ? "Choose a new password for your account."
+                : "We'll email you a link to set a new password."}
         </p>
 
         <form onSubmit={submit} className="mt-8 space-y-3">
-          <Field
-            label="Email"
-            type="email"
-            required
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@email.com"
-          />
+          {mode !== "recovery" ? (
+            <Field
+              label="Email"
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@email.com"
+            />
+          ) : null}
           {mode !== "reset" ? (
             <label className="block">
-              <span className="label-caps mb-1.5 block">Password</span>
+              <span className="label-caps mb-1.5 block">
+                {mode === "recovery" ? "New password" : "Password"}
+              </span>
               <div className="flex items-center gap-2 rounded-xl border border-input bg-elevated px-3 py-2.5 focus-within:border-primary">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -179,9 +187,12 @@ function AuthPage() {
                 ? "Sign in"
                 : mode === "signup"
                   ? "Sign up"
-                  : "Send reset link"}
+                  : mode === "recovery"
+                    ? "Update password"
+                    : "Send reset link"}
           </Button>
         </form>
+
 
         <button
           type="button"
