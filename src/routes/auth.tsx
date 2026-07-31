@@ -27,25 +27,50 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup" | "reset">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recovery">(
+    "signin",
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/home" });
+    const href = window.location.href;
+    const isRecoveryUrl =
+      href.includes("type=recovery") || href.includes("error_code=");
+    if (href.includes("type=recovery")) setMode("recovery");
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setMode("recovery");
     });
+
+    if (!isRecoveryUrl) {
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) navigate({ to: "/home" });
+      });
+    }
+
+    return () => sub.subscription.unsubscribe();
   }, [navigate]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     try {
+      if (mode === "recovery") {
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) throw error;
+        await supabase.auth.signOut();
+        toast.success("Password updated. Sign in with your new password.");
+        setPassword("");
+        setMode("signin");
+        window.history.replaceState(null, "", "/auth");
+        return;
+      }
       if (mode === "reset") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin + "/auth",
+          redirectTo: window.location.origin + "/auth?type=recovery",
         });
         if (error) throw error;
         toast.success("Check your email for the reset link.");
@@ -74,6 +99,7 @@ function AuthPage() {
       setBusy(false);
     }
   }
+
 
   return (
     <div className="relative mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center overflow-hidden px-6 py-12">
