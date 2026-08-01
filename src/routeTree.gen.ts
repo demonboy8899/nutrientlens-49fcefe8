@@ -21,7 +21,6 @@ import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/h
 import { Route as AuthenticatedFoodRouteImport } from './routes/_authenticated/food'
 import { Route as AuthenticatedCoachRouteImport } from './routes/_authenticated/coach'
 import { Route as AuthenticatedStylesIndexRouteImport } from './routes/_authenticated/styles.index'
-import { Route as ApiPublicAiSelftestRouteImport } from './routes/api/public/ai-selftest'
 import { Route as AuthenticatedStylesStyleIdRouteImport } from './routes/_authenticated/styles.$styleId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -84,11 +83,6 @@ const AuthenticatedStylesIndexRoute =
     path: '/styles/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const ApiPublicAiSelftestRoute = ApiPublicAiSelftestRouteImport.update({
-  id: '/api/public/ai-selftest',
-  path: '/api/public/ai-selftest',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedStylesStyleIdRoute =
   AuthenticatedStylesStyleIdRouteImport.update({
     id: '/styles/$styleId',
@@ -108,7 +102,6 @@ export interface FileRoutesByFullPath {
   '/progress': typeof AuthenticatedProgressRoute
   '/workout': typeof AuthenticatedWorkoutRoute
   '/styles/$styleId': typeof AuthenticatedStylesStyleIdRoute
-  '/api/public/ai-selftest': typeof ApiPublicAiSelftestRoute
   '/styles/': typeof AuthenticatedStylesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -123,7 +116,6 @@ export interface FileRoutesByTo {
   '/progress': typeof AuthenticatedProgressRoute
   '/workout': typeof AuthenticatedWorkoutRoute
   '/styles/$styleId': typeof AuthenticatedStylesStyleIdRoute
-  '/api/public/ai-selftest': typeof ApiPublicAiSelftestRoute
   '/styles': typeof AuthenticatedStylesIndexRoute
 }
 export interface FileRoutesById {
@@ -140,7 +132,6 @@ export interface FileRoutesById {
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/_authenticated/workout': typeof AuthenticatedWorkoutRoute
   '/_authenticated/styles/$styleId': typeof AuthenticatedStylesStyleIdRoute
-  '/api/public/ai-selftest': typeof ApiPublicAiSelftestRoute
   '/_authenticated/styles/': typeof AuthenticatedStylesIndexRoute
 }
 export interface FileRouteTypes {
@@ -157,7 +148,6 @@ export interface FileRouteTypes {
     | '/progress'
     | '/workout'
     | '/styles/$styleId'
-    | '/api/public/ai-selftest'
     | '/styles/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -172,7 +162,6 @@ export interface FileRouteTypes {
     | '/progress'
     | '/workout'
     | '/styles/$styleId'
-    | '/api/public/ai-selftest'
     | '/styles'
   id:
     | '__root__'
@@ -188,7 +177,6 @@ export interface FileRouteTypes {
     | '/_authenticated/progress'
     | '/_authenticated/workout'
     | '/_authenticated/styles/$styleId'
-    | '/api/public/ai-selftest'
     | '/_authenticated/styles/'
   fileRoutesById: FileRoutesById
 }
@@ -197,7 +185,6 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiPublicAiSelftestRoute: typeof ApiPublicAiSelftestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -286,13 +273,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStylesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/ai-selftest': {
-      id: '/api/public/ai-selftest'
-      path: '/api/public/ai-selftest'
-      fullPath: '/api/public/ai-selftest'
-      preLoaderRoute: typeof ApiPublicAiSelftestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/styles/$styleId': {
       id: '/_authenticated/styles/$styleId'
       path: '/styles/$styleId'
@@ -335,7 +315,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiPublicAiSelftestRoute: ApiPublicAiSelftestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
