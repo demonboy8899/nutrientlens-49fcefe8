@@ -19,8 +19,9 @@ export async function callGemini(opts: {
   system: string;
   messages: ChatMessage[];
 }): Promise<string> {
-  const key = process.env["GEMINI_API_KEY"];
-  if (!key) throw new Error("AI is not configured yet — GEMINI_API_KEY is missing.");
+  const key = process.env["GEMINI_API_KEY"] || process.env["Gemini_key"];
+  if (!key) throw new Error("AI is not configured yet — the Gemini API key is missing.");
+
 
   const res = await fetch(ENDPOINT, {
     method: "POST",
